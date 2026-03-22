@@ -1,0 +1,76 @@
+# 1. Переход в домашний каталог и создание файла отчета
+cd ~
+touch ${USER}_part3.log
+# 2. Создание иерархии каталогов D1/D2/D3
+mkdir -p D1/D2/D3
+# 3. Создание пустого файла file.txt в D2
+touch D1/D2/file.txt
+# Результат: -rw-r--r-- 1 eltex-pg1-v17 eltex-pg1-v17 0 Mar 22 22:24 D1/D2/file.txt
+# 4. Добавление текста в file.txt
+echo "Hello" >> D1/D2/file.txt
+# Результат: Hello
+# 5. Создание ссылок в D3
+cd D1/D2/D3
+ln -s ../file.txt symlink_file.txt
+ln ../file.txt hardlink_file.txt
+cd ~
+# Результат:
+# -rw-r--r-- 2 eltex-pg1-v17 eltex-pg1-v17  6 Mar 22 22:26 hardlink_file.txt
+# lrwxrwxrwx 1 eltex-pg1-v17 eltex-pg1-v17 11 Mar 22 22:27 symlink_file.txt -> ../file.txt
+# 6. Проверка создания ссылок
+ls -li D1/D2/D3/
+# Результат:
+# 655600 -rw-r--r-- 2 eltex-pg1-v17 eltex-pg1-v17  6 Mar 22 22:26 hardlink_file.txt
+# 655601 lrwxrwxrwx 1 eltex-pg1-v17 eltex-pg1-v17 11 Mar 22 22:27 symlink_file.txt -> ../file.txt
+# 7. Перемещение file.txt в D1
+mv D1/D2/file.txt D1/
+# Результат после перемещения:
+# Файлы в D1:
+# drwxr-xr-x 3 eltex-pg1-v17 eltex-pg1-v17 4096 Mar 22 22:31 D2
+# -rw-r--r-- 2 eltex-pg1-v17 eltex-pg1-v17    6 Mar 22 22:26 file.txt
+# Файлы в D2:
+# drwxr-xr-x 2 eltex-pg1-v17 eltex-pg1-v17 4096 Mar 22 22:27 D3
+# 8. Проверка работы ссылок после перемещения file.txt
+cat D1/D2/D3/symlink_file.txt
+# Результат: cat: D1/D2/D3/symlink_file.txt: No such file or directory
+cat D1/D2/D3/hardlink_file.txt
+# Результат: Hello
+# Вывод: жесткая ссылка работает, символическая — нет.
+# Причина: жесткая ссылка ссылается на inode файла, который не изменился при перемещении.
+# Символическая ссылка хранит путь, который теперь указывает на несуществующий файл.
+# 9. Удаление каталога D2 со всем содержимым
+rm -rf D1/D2
+# Результат:
+# drwxr-xr-x  2 eltex-pg1-v17 eltex-pg1-v17 4096 Mar 22 22:34 .
+# drwxr-xr-x 19 eltex-pg1-v17 eltex-pg1-v17 4096 Mar 22 22:30 ..
+# -rw-r--r--  1 eltex-pg1-v17 eltex-pg1-v17    6 Mar 22 22:26 file.txt
+# 10. Поиск файлов размером >20МБ
+find / -type f -size +20M -exec du -h {} \; 2>/dev/null > ${USER}_part3_gt50M.log
+# Первые 5 найденных файлов:
+# 31M   /usr/bin/x86_64-linux-gnu-lto-dump-12
+# 31M   /usr/lib/gcc/x86_64-linux-gnu/12/lto1
+# 32M   /usr/lib/gcc/x86_64-linux-gnu/12/cc1
+# 30M   /usr/lib/x86_64-linux-gnu/libicudata.so.72.1
+# 0     /proc/kcore
+# 11. Поиск файлов в домашнем каталоге, измененных за последние 24 часа
+find ~ -type f -mtime -1 2>/dev/null
+# Результат (первые 10):
+# /home/eltex-pg1-v17/.viminfo
+# /home/eltex-pg1-v17/report_part1.txt
+# /home/eltex-pg1-v17/eltex-pg1-v17_part3_gt50M.log
+# /home/eltex-pg1-v17/.lesshst
+# /home/eltex-pg1-v17/D1/file.txt
+# /home/eltex-pg1-v17/eltex-pg1-v17_part3.log
+# /home/eltex-pg1-v17/.bash_history
+# /home/eltex-pg1-v17/eltex-pg1-v17_part.log
+# 12. Определение каталога команды find
+which find
+# Результат: /usr/bin/find
+# 13. Определение типа файла find
+file $(which find)
+# Результат: /usr/bin/find: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=5545a6c7162d325fbe5ffabcbfe4e5521b66ce70, for GNU/Linux 3.2.0, stripped
+# 14. Определение типа файлов /boot/initrd.img*
+file /boot/initrd.img*
+# Результат:
+# /boot/initrd.img-6.1.0-40-amd64: ASCII cpio archive (SVR4 with no CRC)
+# /boot/initrd.img-6.1.0-43-amd64: ASCII cpio archive (SVR4 with no CRC)

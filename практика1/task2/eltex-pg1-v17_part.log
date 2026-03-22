@@ -1,0 +1,88 @@
+# 1. Запущена screen-сессия с именем $(whoami)_part2
+screen -S $(whoami)_part2
+# 2. Дополнение имен команд: все команды на 'ls'
+ls<tab><tab>
+# 3. Дополнение имен переменных: все переменные на 'HIST'
+echo $HIST<tab><tab>
+# Вывод: HISTCMD HISTCONTROL HISTFILE HISTFILESIZE HISTSIZE
+# 4. Количество команд в файле истории
+echo $HISTSIZE
+# Результат: 1000
+# 5. Имена файлов и каталогов, начинающихся с '.'
+ls -ld ~/.*
+# Результат (первые 5 строк):
+# -rw------- 1 eltex-pg1-v17 eltex-pg1-v17 32232 Mar 22 21:35 /home/eltex-pg1-v17/.bash_history
+# -rw-r--r-- 1 eltex-pg1-v17 eltex-pg1-v17   220 Mar 30  2024 /home/eltex-pg1-v17/.bash_logout
+# -rw-r--r-- 1 eltex-pg1-v17 eltex-pg1-v17  3526 Mar 30  2024 /home/eltex-pg1-v17/.bashrc
+# drwx------ 3 eltex-pg1-v17 eltex-pg1-v17  4096 Mar  5 17:35 /home/eltex-pg1-v17/.config
+# -rw-r--r-- 1 eltex-pg1-v17 eltex-pg1-v17 13607 Mar  7 19:02 /home/eltex-pg1-v17/.log
+
+# 6. Настройка вывода даты в истории команд
+export HISTTIMEFORMAT="%d.%m.%y %H:%M:%S "
+history 5
+# Результат:
+# 722  22.03.26 21:48:28 echo "# 6. Настройка вывода даты в истории команд" >> ~/eltex-pg1-v17_part.log
+# 723  22.03.26 21:48:32 echo "export HISTTIMEFORMAT="%d.%m.%y %H:%M:%S "" >> ~/eltex-pg1-v17_part.log
+# 724  22.03.26 21:48:36 echo "history 5" >> ~/eltex-pg1-v17_part.log
+# 725  22.03.26 21:48:45 echo "# Результат:" >> ~/eltex-pg1-v17_part.log
+# 726  22.03.26 21:48:45 history 5 | while read line; do echo "# $line" >> ~/eltex-pg1-v17_part.log; done
+
+# 7. Настройка автоматического сохранения истории
+date
+history | grep date
+tail -5 ~/.bash_history | grep date
+export PROMPT_COMMAND="history -a"
+whoami
+history | grep whoami
+tail -5 ~/.bash_history | grep whoami
+# 8. Создание переменной DATE
+DATE=$(date +%d.%m.%Y)
+echo $DATE
+# Результат: 22.03.2026
+# 9. Создание переменной TIME
+TIME=$(date +%H:%M:%S)
+echo $TIME
+# Результат: 21:54:32
+# 10. Создание переменной DATE_TIME
+DATE_TIME="$DATE $TIME"
+echo $DATE_TIME
+# Результат: 22.03.2026 21:54:11
+# 11. Имена файлов с цифрами из /bin и /sbin
+ls /bin /sbin | grep '[0-9]'
+# Результат (первые 10 строк):
+# addr2line
+# b2sum
+# base32
+# base64
+# bunzip2
+# bzip2
+# bzip2recover
+# c89
+# c89-gcc
+# c99
+# 12. Изменение приглашения командной строки
+PS1='\u@\H-\t> '
+# Новое приглашение: \u@\H-\t>
+# 13. Наследование приглашения в дочернем bash
+echo $PS1  # родительский
+# Результат: \u@\H-\t>
+bash
+echo $PS1  # дочерний
+# Результат: ${debian_chroot:+($debian_chroot)}\\[\033[01;32m\\]\u@\h\[\033[00m\\]:\[\033[01;34m\\]\w\[\033[00m\\]\$
+exit
+# Вывод: приглашение в дочернем bash не наследуется
+# 14. Создание подкаталогов для каждого месяца текущего года
+mkdir -p ~/$(date +%Y)-{01..12}
+# Результат: созданы каталоги:
+# /home/eltex-pg1-v17/2026-01
+# /home/eltex-pg1-v17/2026-02
+# /home/eltex-pg1-v17/2026-03
+# /home/eltex-pg1-v17/2026-04
+# /home/eltex-pg1-v17/2026-05
+# /home/eltex-pg1-v17/2026-06
+# /home/eltex-pg1-v17/2026-07
+# /home/eltex-pg1-v17/2026-08
+# /home/eltex-pg1-v17/2026-09
+# /home/eltex-pg1-v17/2026-10
+# /home/eltex-pg1-v17/2026-11
+# /home/eltex-pg1-v17/2026-12
